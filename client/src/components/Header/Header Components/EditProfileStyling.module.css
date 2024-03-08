@@ -1,0 +1,136 @@
+body {
+    color: black;
+    background-color: #fff;
+    font-family: 'Roboto', sans-serif;
+}
+
+.formControl {
+    height: 40px;
+    box-shadow: none;
+    color: black;
+}
+
+.formControl:focus {
+    border-color: black;
+}
+
+.formControl,
+.btn {
+    border-radius: 3px;
+}
+
+.editForm {
+    width: 450px;
+    margin: 0 auto;
+    padding: 30px 0;
+    font-size: 15px;
+    color: black;
+}
+
+.editForm h2 {
+    color: black;
+    margin: 0 0 15px;
+    position: relative;
+    text-align: center;
+}
+
+.editForm h2:before,
+.editForm h2:after {
+    content: "";
+    height: 2px;
+    width: 30px;
+    background: #d4d4d4;
+    position: absolute;
+    top: 50%;
+    z-index: 2;
+}
+
+.editForm h2:before {
+    left: 0;
+}
+
+.editForm h2:after {
+    right: 0;
+}
+
+.editForm .hint-text {
+    color: black;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.editForm form {
+    color: #999;
+    border-radius: 3px;
+    margin-bottom: 15px;
+    background: #f2f3f7;
+    box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+    padding: 30px;
+}
+
+.editForm .formGroup {
+    margin-bottom: 20px;
+}
+
+.editForm .btn {
+    font-size: 16px;
+    font-weight: bold;
+    min-width: 140px;
+    outline: none !important;
+}
+
+.editForm .row div:first-child {
+    padding-right: 10px;
+}
+
+.editForm .row div:last-child {
+    padding-left: 10px;
+}
+
+.editForm a {
+    color: black;
+    text-decoration: underline;
+}
+
+.editForm a:hover {
+    text-decoration: none;
+}
+
+.editForm form a {
+    color: blue;
+    text-decoration: none;
+}
+
+.editForm form a:hover {
+    text-decoration: underline;
+}
+
+.formLabel {
+    color: black;
+    margin: 0 0 15px;
+}
+
+@media screen and (max-width: 600px) {
+
+    .row {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .row>.col1 {
+        padding-left: 12px;
+        padding-right: 8px;
+        width: 410px;
+    }
+
+    .row>.col2 {
+        padding-right: 10px;
+        padding-left: 12px;
+        width: 410px;
+    }
+
+    .editForm .row div:last-child {
+        padding-left: 12px;
+    }
+}

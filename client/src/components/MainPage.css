@@ -1,0 +1,147 @@
+.flex-container-1 {
+    /* border: 5px solid red; */
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    height: 65vh;
+    background-color: blue;
+}
+
+.item1 > h1 {
+    color: white;
+    font-size: 60px;
+    font-weight: 500;
+
+
+    margin-bottom: 35px;
+}
+
+.item2 > p {
+    color: white;
+    font-size: 17px;
+    font-weight: 400;
+
+    margin-bottom: 30px;
+}
+
+.button {
+    background-color: #e7e7e76b;
+    border: none;
+    color: white;
+    padding: 12px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    font-weight: 300;
+    margin: 6px;
+    transition-duration: 0.4s;
+    cursor: pointer;
+
+    background-color: white;
+    color: black;
+    border: 2px solid #e7e7e76b;
+    border-radius: 8px;
+
+    width: 100px;
+}
+
+
+.button:hover {
+    background-color: #e7e7e7;;
+    color: white;
+}
+
+
+
+.flex-container-2 {
+    /* border: 5px solid green; */
+
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+
+    height: 26.5vh;
+    background-color: white;
+}
+
+.desc {
+    
+    padding: 5px 5px 5px 5px;
+
+    border: none;
+
+    text-align: center;
+}
+
+.desc > p {
+    width: 32vw;
+}
+.loggedInContainer{
+    /* height: 90%; */
+    height: 25vh;
+
+    background-color: blue;
+}
+.item1-loggedIn > h1{
+    color: white;
+    font-size: 60px;
+    font-weight: 500;
+    
+    margin-top: 100px;
+    margin-bottom: 80px;
+}
+
+@media screen and (max-width: 768px){
+    .flex-container-1 {
+        height: 50vh;
+    }
+
+    .item1 > h1 {
+        font-size: 40px;
+    }
+
+    .item2 > p {
+        font-size: 14px;
+    }
+
+    .desc > p {
+        width: 80%;
+    }
+}
+
+@media screen and (max-width: 576px) {
+    .flex-container-1 {
+        height: 40vh;
+    }
+
+    .item1 > h1 {
+        font-size: 30px;
+    }
+
+    .item2 > p {
+        font-size: 12px;
+    }
+
+    .button {
+        font-size: 14px;
+    }
+
+    .desc > p{
+        width: 90%;
+    }
+
+    .flex-container-2 {
+        display: flex;
+        flex-direction: columns;
+        height: auto;
+    }
+
+    .desc {
+        margin-bottom: 20px;
+    }
+}

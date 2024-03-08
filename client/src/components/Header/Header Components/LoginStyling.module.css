@@ -1,0 +1,126 @@
+body{
+    color: black;
+    background-color: #fff;
+    font-family: 'Roboto', sans-serif;
+}
+
+.formControl {
+    height: 40px;
+    box-shadow: none;
+    color: black;
+}
+
+.formControl:focus {
+    border-color: black;
+}
+
+.formControl, .btn{
+    border-radius: 3px;
+}
+
+.loginForm {
+    width: 450px;
+    margin: 0 auto;
+    padding: 30px 0;
+    font-size: 15px;
+    text-align: center;
+}
+
+.loginForm h2 {
+    color: black;
+    margin: 0 0 15px;
+    position: relative;
+    text-align: center;
+}
+
+.loginForm h2:before, .loginForm h2:after {
+    content: "";
+    height: 2px;
+    width: 30px;
+    background: #d4d4d4;
+    position: absolute;
+    top: 50%;
+    z-index: 2;
+}
+
+.loginForm h2:before {
+    left: 0;
+}
+
+.loginForm h2:after {
+    right: 0;
+}
+
+.loginForm .hint-text {
+    color: black;
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.loginForm form {
+    color: #999;
+    border-radius: 3px;
+    margin-bottom: 31px;
+    background: #f2f3f7;
+    box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+    padding: 30px;
+}
+
+.loginForm .formGroup {
+    margin-top: 40px;
+    margin-bottom: 40px;
+}
+
+.loginForm .btn {
+    font-size: 16px;
+    font-weight: bold;
+    min-width: 140px;
+    outline: none !important;
+}
+
+.loginForm a {
+    color: black;
+    text-decoration: underline;
+}
+
+.loginForm a:hover {
+    text-decoration: none;
+}
+
+.loginForm form a {
+    color: blue;
+    text-decoration: none;
+}
+
+.loginForm form a:hover {
+    text-decoration: underline;
+}
+
+
+@media screen and (max-width: 600px) {
+
+    .row {
+        /* background-color: blue; */
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .row > .col1{
+        /* background-color: #5cb85c; */
+        padding-left: 12px;
+        padding-right: 8px;
+        width: 410px;
+    }
+
+    .row > .col2{
+        /* background-color: blue; */
+        padding-right: 10px;
+        padding-left: 12px;
+        width: 410px;
+    }
+
+    .loginForm .row div:last-child {
+        padding-left: 12px;
+    } 
+} 
