@@ -24,7 +24,6 @@ const getUser = async(req, res) => {
 const createUser = async(req, res) => {
     // get data passed by the user
     let userDetails = req.body;
-    console.log('userDetails passed - ', userDetails);
     // check if there's already a user registered with the username
     let checkDupUser = await User.findOne({username: userDetails.username})
     if(checkDupUser !== null){
@@ -36,11 +35,9 @@ const createUser = async(req, res) => {
 
         // hash the password
         let hashedPassword = await bcryptjs.hash(userDocument.password, 5);
-        console.log('hashed password - ', hashedPassword);
 
         // update the password with the hashed password
         userDocument.password = hashedPassword;
-        console.log('userDocument - ', userDocument);
         //save the userDocument in the database
         let newUser = await userDocument.save()
 
@@ -54,7 +51,6 @@ const loginUser = async(req, res) => {
     // get data passed by the user
     let userDetails = req.body;
 
-    console.log('userDetails passed - ', userDetails);
     // check if username exists in the database
     let user = await User.findOne({ username: userDetails.username });
     if(user === null){
@@ -63,12 +59,8 @@ const loginUser = async(req, res) => {
     else{
         // user exists
 
-        console.log('entered password - ', userDetails.password);
-        console.log('found password - ', user.password);
-
         // compare password
         let result = await bcryptjs.compare(userDetails.password, user.password);
-        console.log('hash result - ', result);
         // if password not matched
         if(result === false){
             return res.send({ payload: "Invalid password!"});
@@ -92,12 +84,10 @@ const getUserByUsername = async(req, res) => {
     // res.send({message: "inside getuserbyusername"})
     // get username from url parameter
     let {username} = req.params;
-    console.log('username - ', username);
 
     // find user from database
     let user = await User.findOne({username})
 
-    console.log('user found - ', user);
     // check if user is found
     if(!user){
         res.send({ message: "User not found in DB"})
@@ -110,7 +100,6 @@ const getUserByUsername = async(req, res) => {
 // controller for update user
 const updateUser = async(req, res) => {
     const userDetails = req.body;
-    console.log('userDetails Id - ', userDetails.id);
     
     // check if the ID is provided in the request body
     if(!userDetails.id) {
@@ -119,7 +108,7 @@ const updateUser = async(req, res) => {
 
     try{
         let user = await User.findOneAndUpdate({ _id: userDetails.id}, {$set: userDetails}, {new: true})
-
+        // new = true returns the updated object
         if(!user) {
             return res.status(400).send({message: "User not found in DB"})
         }
@@ -127,7 +116,6 @@ const updateUser = async(req, res) => {
         res.status(200).send({message: "User modified", payload: user})
     }
     catch(error){
-        console.log("Error updating user: ", error);
         res.send({message: "Internal server error"});
     }
     

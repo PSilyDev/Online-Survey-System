@@ -13,8 +13,6 @@ const addResponse = async(req, res) => {
     // get response details passed by the user
     const responseDetails = req.body;
 
-    console.log('response details sent by the user - ', responseDetails);
-
     let responseDocument = new ResponseModel(responseDetails);
 
     let newResponse = await responseDocument.save()

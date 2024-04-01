@@ -1,12 +1,19 @@
 import { LoginContext } from './Context/LoginContext';
+
 import { useEffect, useState } from 'react';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom/dist';
+import { jwtDecode } from 'jwt-decode';
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import './App.css';
 
 
-import Register from './components/Header/Header Components/Register';
-import Login from './components/Header/Header Components/Login';
-import EditProfile from './components/Header/Header Components/EditProfile';
+// import Register from './components/Header/Header Components/Register';
+import Register from './components/Additional Components/Register';
+// import Login from './components/Header/Header Components/Login';
+import Login from './components/Additional Components/Login'
+// import EditProfile from './components/Header/Header Components/EditProfile';
+import EditProfile from './components/Additional Components/EditProfile'
 import RootLayout from './components/RootLayout';
 import AddSurvey from './components/Core Components/AddSurvey';
 import ViewSurvey from './components/Core Components/ViewSurvey';
@@ -15,14 +22,11 @@ import Result from './components/Core Components/Result';
 import PostSurvey from './components/Core Components/PostSurvey';
 import MainPage from './components/MainPage';
 import PrivateRoute from './components/PrivateRoute';
-import { jwtDecode } from 'jwt-decode';
-import Test from './components/Test';
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import Test from './components/Additional Components/Test';
+import TermsOfService from './components/Additional Components/TermsOfService';
+import AboutUs from './components/Additional Components/AboutUs';
 
 function App() {
-
-  
 
   //userData is for string what user is currently Logged In
   const [userData, setUserData] = useState({});
@@ -33,13 +37,17 @@ function App() {
   //showEdit buttons is a check for Edit Button
   const [showEditButton, setShowEditButton] = useState(true);
 
+  // checking if the page was refreshed
   const [refreshed, setRefresh] = useState(false);
 
   
   
-  useEffect(() => {
+  useEffect(() => {       //refresh logic - reinstate userData (Note - refresh return to same page in PrivateRoute)
+
+    //userData state is empty but userCred Obj present, stored during Login
     if(Object.keys(userData).length === 0 && localStorage.getItem('userCred') !== null){
-      //authenticate the token
+
+      //step 1 -authenticate the token
       const authToken = localStorage.getItem('token');
       const userCred = JSON.parse(localStorage.getItem('userCred'));
 
@@ -48,6 +56,7 @@ function App() {
         }
         else{
             try{
+              // decode the jwt token, we get - username, exp, iat
                 const decodedToken = jwtDecode(authToken)
                 const currentTime = Date.now() /1000 // convert to sec
 
@@ -69,11 +78,12 @@ function App() {
                     toast.error("Invalid Session. Login again!",{
                       autoClose: 2000
                   })
-                    // navigate('/login')
                 }
                 else{
+                  // set the refresh state to true
                   setRefresh(true);
                   let data = JSON.parse(localStorage.getItem('userCred'));
+                  // update the userData state with the data stored in the localStorage
                   let updatedUserData = { "id" : data._id, "username": data.username, "email": data.email, "first_name": data.first_name, "last_name": data.last_name, "token": authToken }
                     setUserData(updatedUserData);
                     setShowProfile(true);
@@ -85,16 +95,8 @@ function App() {
             }
         }
     }
-  }, [])
+  }, []) // dependency array is empty, it will run only once, when the children components are refreshed. Why? coz global state are defined in App.js it will re-render everytime there's a change.
 
- 
-  // useEffect(() => {
-  //   if(refreshed){
-  //     // navigate(prevLocation);
-  //     sessionStorage.setItem('prevPath', window.location.pathname);
-    
-  //   }
-  // }, [refreshed]);
   
   //router component 'react-router-dom'
   const browseRoute = createBrowserRouter([
@@ -106,6 +108,11 @@ function App() {
         {
           path:'',
           element: 
+          <MainPage />
+        },
+        {
+          path:'mainPage',
+          element:
           <MainPage />
         },
         {
@@ -155,10 +162,14 @@ function App() {
           path:'takeSurvey/:categoryName/:surveyName',
           element: <TakeSurvey />
         },
-        // {
-        //   path:'test',
-        //   element: <Test />
-        // },
+        {
+          path: 'tos',
+          element: <TermsOfService />
+        },
+        {
+          path: 'aboutUs',
+          element: <AboutUs />
+        },
         {
           path:'*',
           element: <Test />
@@ -170,10 +181,10 @@ function App() {
   return (
     <>
     {/* Using Context to pass data through all the components */}
-    <LoginContext.Provider value={{userData, setUserData, showProfile, setShowProfile, showEditButton, setShowEditButton, refreshed, setRefresh}}>
-      <RouterProvider router={browseRoute} />
-    </LoginContext.Provider>
-    
+      <LoginContext.Provider value={{userData, setUserData, showProfile, setShowProfile, showEditButton, setShowEditButton, refreshed, setRefresh}}>
+        <RouterProvider router={browseRoute} />
+      </LoginContext.Provider>
+      <ToastContainer />
     </>
   );
 }

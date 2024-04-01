@@ -1,8 +1,9 @@
+import TakeSurveyCSS from './css/TakeSurveyStyling.module.css';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom';
-// import './css/TakeSurveyStyling.css'
-import TakeSurveyCSS from './css/TakeSurveyStyling.module.css';
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function TakeSurvey() {
 
@@ -43,7 +44,6 @@ function TakeSurvey() {
         .catch(error => console.log('Error fetching categories', error));
   }, []);
 
-  console.log('fetched data take Survey - ', fetchedData);
 
   function handleInfoChange(event){
     let name = event.target.name;
@@ -68,15 +68,22 @@ function TakeSurvey() {
    const name = event.target.name;
    const value = event.target.value;
 
-   setOptionSelected([...optionSelected, event.target.value]);
+   setOptionSelected([event.target.value]);
   }
+
+  function handleCheckboxChange(event){
+    
+
+    const name = event.target.name;
+    const value = event.target.value;
+ 
+    setOptionSelected([...optionSelected, event.target.value]);
+   }
   
 
   function handleOptionSubmit(event, currentSurveyItem){
     event.preventDefault();
 
-    console.log('pointer has reached here - , survey passed - ', currentSurveyItem);
-    console.log('pointer has reached here, option selected - ', optionSelected);
     setSurveyData({
       ...surveyData,
       id: initialInfo.id,
@@ -100,11 +107,7 @@ function TakeSurvey() {
   function handleNextQuestion(event){
     event.preventDefault();
 
-   
     setNextQueButtonPressed(false);
-
-
-    
 
     setCurrentQuestionIndex(prevIndex => prevIndex + 1);
   }
@@ -112,7 +115,6 @@ function TakeSurvey() {
   function handleSubmitSurvey(event, currentSurveyItem){
     event.preventDefault();
     
-
     setSurveyData((prevSurveyData) => ({
       ...prevSurveyData,
       answers: [
@@ -126,8 +128,8 @@ function TakeSurvey() {
 
     try{
       axios.post('http://localhost:4000/response-api/response', surveyData)
-        .then(alert('Submitted Successfully!!!')
-
+        .then(
+          toast.success('Submitted Successfully!', { autoClose: 2000 })
         )
       
   } catch(error){
@@ -135,15 +137,10 @@ function TakeSurvey() {
   }
   }
 
-  console.log('survey data to be passed - ', surveyData)
-
-
-
   return (
     <>
     <div className={TakeSurveyCSS.takeSurvey}>
       <div className={TakeSurveyCSS.containerStyle}>
-        {/* <form onSubmit={handleSubmitSurvey}> */}
         <form>
           <div className={TakeSurveyCSS.rowStyle}>
             <div className={TakeSurveyCSS.dropdownStyle}>
@@ -237,18 +234,34 @@ function TakeSurvey() {
                               onChange={handleOptionChange}
                             />
                           )}
-                          {question.options.map((option, index) => (
+                          {
+                          question.options.map((option, index) => (
                              <>
                              <div className={TakeSurveyCSS.colWidth90} key={index}>
                               <div className={TakeSurveyCSS.colWidth10}>
-                                <input
+                                {(question.type === 'radio') &&
+
+                                (<input
                                   className='form-check-input'
                                   type={question.type}
                                   name='option'
                                   value={option}
                                   // required
                                   onChange={handleOptionChange}
+                                />)
+                                }
+                                {(question.type === 'checkbox') &&
+                                  
+                                (<input
+                                  className='form-check-input'
+                                  type={question.type}
+                                  name='option'
+                                  value={option}
+                                  // required
+                                  onChange={handleCheckboxChange}
                                 />
+                                )
+                                }
                               </div>
                             
                               <label
@@ -276,7 +289,7 @@ function TakeSurvey() {
                         {
                           (currentQuestionIndex === survey.questions.length -1 && nextQueButtonPressed) && (
 
-                            <button className={TakeSurveyCSS.functionalBtns} type='button' onClick={(event) => handleSubmitSurvey(event, survey)}>Done</button>
+                          <button className={TakeSurveyCSS.functionalBtns} type='button' onClick={(event) => handleSubmitSurvey(event, survey)}>Done</button>
 
                           )
                         }
@@ -291,6 +304,7 @@ function TakeSurvey() {
       </form>
       </div>
       </div>
+      <ToastContainer />
     </>
   )
 }

@@ -103,32 +103,22 @@ body{
     text-decoration: underline;
 }
 
-/* .formControl {
-    background-color: red;
-}
-
-.formGroup {
-    background-color: yellow;
-} */
 
 @media screen and (max-width: 600px) {
 
     .row {
-        /* background-color: blue; */
         display: flex;
         flex-direction: column;
         gap: 20px;
     }
 
     .row > .col1{
-        /* background-color: #5cb85c; */
         padding-left: 12px;
         padding-right: 8px;
         width: 410px;
     }
 
     .row > .col2{
-        /* background-color: blue; */
         padding-right: 10px;
         padding-left: 12px;
         width: 410px;

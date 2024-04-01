@@ -4,18 +4,22 @@ import { useContext} from "react";
 import { LoginContext } from "../../Context/LoginContext";
 import { Link, useNavigate } from "react-router-dom/dist";
 
+
+
 export default function Header() {
     const navigate = useNavigate();
     const {userData, showProfile, setShowProfile, setUserData, showEditButton, setShowEditButton} = useContext(LoginContext);
 
     
     function handleLogoutClicked(){
+        // toast.success("Logged out successfully. Routing to Login!", {autoClose: 2000})
+        
         localStorage.removeItem('token');
         localStorage.removeItem('userCred');
         sessionStorage.removeItem('prevPath');
         setShowProfile(false);
         setUserData({});
-        alert("Logged out successfully. Routing to Login!")
+        // navigate('/mainPage')
     }
 
     function handleRoute(event){
@@ -35,20 +39,21 @@ export default function Header() {
                             <>
                             {
                                 showEditButton?
-                                (
+                                ( //we are in the edit page
                                     <>
                                         <button className={`${HeaderCSS.profileBtn} ${HeaderCSS.btnn}`} disabled={true}>Hello, {userData.first_name}!</button>
                                         <Link to='/editProfile' className={HeaderCSS.btnn} onClick={() => setShowEditButton(false)}>Edit Profile</Link>
                                         <Link to='/Login' className={HeaderCSS.btnn} onClick={handleLogoutClicked}>Logout</Link>
                                     </>
                                 ) : 
-                                (
+                                ( //we are not in the edit page
                                     <>
                                         <Link to='/addSurvey' className={HeaderCSS.btnn} onClick={() => setShowEditButton(true)}>Return</Link>
                                         <Link to='/Login' className={HeaderCSS.btnn} onClick={handleLogoutClicked}>Logout</Link>
                                     </>
                                 )
                             }
+                            {/* for components on small screen */}
                             <select
                                 onChange={handleRoute}
                                 className={HeaderCSS.selectType}
@@ -62,6 +67,7 @@ export default function Header() {
                         </>
                         ) : 
                         (
+                            // user is logged out
                             <>
                                 <Link to="/register" className={HeaderCSS.btnn}>Register</Link>
                                 <Link to="/login" className={HeaderCSS.btnn}>Login</Link>

@@ -1,20 +1,16 @@
-import React, { useContext } from 'react'
-import { useState, useEffect } from 'react';
+import React from 'react'
 import axios from 'axios';
-import { Link } from 'react-router-dom';
-// import './css/PostSurveyStyling.css'
 import PostSurveyCSS from './css/PostSurveyStyling.module.css'
-// import VerifyToken, {authUser} from '../../VerifyToken';
+
+import { useState, useEffect, useContext } from 'react';
+import { Link } from 'react-router-dom';
 import { LoginContext } from '../../Context/LoginContext';
-import { useNavigate} from 'react-router-dom';
-import { jwtDecode } from 'jwt-decode';
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function PostSurvey() {
 
-    const navigate = useNavigate();
-
-    // VerifyToken();
-    const {userData, setUserData, setShowProfile, setShowEditButton} = useContext(LoginContext);
+    const {setShowEditButton} = useContext(LoginContext);
 
     const [fetchedData, setFetchedData] = useState([])
 
@@ -23,19 +19,16 @@ function PostSurvey() {
         survey_name: '',
         to:'',
         subject: '',
-        // link:''
     })
 
     const [errors, setErrors] = useState('')
 
-    console.log('inputValues - ', inputValues);
 
-    
-
-
-    //fetching all the categoeries from json-server
+    //fetching all the categoeries from DB
     useEffect(() => {
+        // if user didi not update the profile and directly moved to another component
         setShowEditButton(true);
+
         axios.get('http://localhost:4000/survey-api/surveys', {
             headers: {
                 Authorization: `Bearer ${localStorage.getItem('token')}`
@@ -43,30 +36,8 @@ function PostSurvey() {
         })
         .then(response => setFetchedData(response.data.payload || []))
         .catch(error => console.log('Error fetching categories : ', error));
-    
-    
-    // let abc = VerifyToken();
-    // console.log('abc - ', abc);
-}, []);
+    }, []);
 
-// async function fetchSurveyData() {
-//     try{
-        
-//         const response = await axios.get('http://localhost:4000/survey-api/surveys', {
-//             headers: {
-//                 Authorization: `Bearer ${localStorage.getItem('token')}`
-//             }
-//         });
-//         console.log('pointer 2 : response receieved from get request - ', response.data)
-//         setFetchedData(response.data.payload || [])
-//     }
-//     catch(error){
-//         console.log('Error fetching survey data : ', error);
-//     }
-// }
-
-    // console.log('fetched data categories - ', fetchedData);
-   
 
     async function handleEmailSubmit(event){
         event.preventDefault();
@@ -75,11 +46,12 @@ function PostSurvey() {
         if(!inputValues.to || inputValues.to.trim() === ''){
             setErrors("Please enter 'To'!")
         }
+        
+        // check if subject is enetered
         else if(!inputValues.subject || inputValues.subject.trim() === ''){
             setErrors("Please enter subject")
         }
         else{
-            const takeSurveyLink = `/takeSurvey/${inputValues.category_name}/${inputValues.survey_name}`;
             setInputValues({...inputValues, category_name: inputValues.category_name, survey_name: inputValues.survey_name})
             const localAPI = await axios.post('http://localhost:4000/survey-api/sendEmail', inputValues, {
                     headers: {
@@ -87,13 +59,18 @@ function PostSurvey() {
                     }
                 });
 
-            console.log('response receieved - ', localAPI);
-            // alert('Email sent successfully!')
+            if(localAPI.data.payload === 'Email sent successfully!'){
+                toast.success("Email sent successfully!", {
+                    autoClose: 2000,
+                });
+            }
+            else{
+                toast.success("Error occurred!", {
+                    autoClose: 2000,
+                });
+            }
         }
     }
-
-    //generating dynamic link that needs to posted to end users
-    
 
     function handleChange(event){
         let name = event.target.name;
@@ -102,99 +79,95 @@ function PostSurvey() {
         setInputValues({...inputValues, [name]: value});
     }
 
-   
-    
-  return (
-    <>
-        {/* selecting the category fetched from the json server */}
-        <div className={PostSurveyCSS.postSurvey}>
-        <div className={PostSurveyCSS.containerStyle}>
-            <div className={PostSurveyCSS.rowStyle}>
-                <div className={PostSurveyCSS.dropdownStyle}>
-                    <div className={PostSurveyCSS.colWidth45}>
-                        {/* <label htmlFor="category">Select Category: </label> */}
-                        <select name='category_name' className='form-select' value={inputValues.category_name} required onChange={handleChange}>
-                            <option value=''>Select Category</option>
-                            {
-                                // hanndleCategoryChange event triggered when user slects the category
-                                fetchedData.map(data => (
-                                <option key={data._id} value={data.category_name}>{data.category_name}</option>
-                                ))
-                            }
-                        </select>
-                    </div>
-            
-                    {
-                    // if the category selected render survey dropdown
-                    inputValues.category_name && (
-                    <>
+    return (
+        <>
+            {/* selecting the category fetched from the DB */}
+            <div className={PostSurveyCSS.postSurvey}>
+            <div className={PostSurveyCSS.containerStyle}>
+                <div className={PostSurveyCSS.rowStyle}>
+                    <div className={PostSurveyCSS.dropdownStyle}>
+
+                        {/* category name */}
                         <div className={PostSurveyCSS.colWidth45}>
-                            {/* <label htmlFor="category">Select Category: </label> */}
-                                <select name='survey_name' className='form-select' value={inputValues.survey_name} required onChange={handleChange}>
-                                    <option value="">Select Survey</option>
-                                    {
-                                        fetchedData.filter(data => (data.category_name === inputValues.category_name))
-                                        .map(data => data.surveys.map(survey => 
-                                            <option key={survey.survey_name} value={survey.survey_name}>{survey.survey_name}</option>
-                                        ))
-                                        // handleSurveyChange triggered when user selects the survey from the dropdown
-                                        // fetchedData[inputValues.category_name].map(item => (
-                                        //     item.surveys.map(survey => 
-                                        //     <option key={survey.survey_name} value={survey.survey_name}>{survey.survey_name}</option>
-                                        // ))
-                                        // )
-                                    }
-                                </select>
+                            <select name='category_name' className='form-select' value={inputValues.category_name} required onChange={handleChange}>
+                                <option value=''>Select Category</option>
+                                {
+                                    // hanndleChange event triggered when user slects the category
+                                    fetchedData.map(data => (
+                                    <option key={data._id} value={data.category_name}>{data.category_name}</option>
+                                    ))
+                                }
+                            </select>
                         </div>
-                    </>
-                    )
-                    }
-                </div>
-            </div>
-            {
-                inputValues.survey_name && (
-
                 
-                <div className={PostSurveyCSS.emailStyle}>
-                <form onSubmit={handleEmailSubmit}>
-                    <div className={PostSurveyCSS.colWidth75}>
+                        {
+                        // if the category selected render survey dropdown
+                        inputValues.category_name && (
+                        <>
 
-                        <label htmlFor='to' className='form-label'>To</label>
-                        {/* for taking email input */}
-                        <input
-                            type='text'
-                            className='form-control'
-                            name='to'
-                            // required
-                            onChange={handleChange}
-                        />
-                    
-
-                        <label htmlFor='subject' className='form-label'>Subject</label>
-                        {/* for taking email input */}
-                        <input 
-                            type='text'
-                            className='form-control'
-                            name='subject'
-                            // required
-                            onChange={handleChange}
-                        />
-                        <label htmlFor='content' className='form-label'>Content</label>
-                        {/* body content containing the dynamic link */}
-                        
-                        <p className='form-control input-lg'>Hello, here's your link to take the survey - <br/><Link to={`/takeSurvey/${inputValues.category_name}/${inputValues.survey_name}`}>Take Survey<br/><br/><br/></Link></p>
-                        {errors.length!==0 && <p className='fs-6 text-center text-danger'>{errors}</p>}
-                        <button className={PostSurveyCSS.functionalBtns} type='submit'>Send</button>
+                            {/* survey name */}
+                            <div className={PostSurveyCSS.colWidth45}>
+                                    <select name='survey_name' className='form-select' value={inputValues.survey_name} required onChange={handleChange}>
+                                        <option value="">Select Survey</option>
+                                        {
+                                            fetchedData.filter(data => (data.category_name === inputValues.category_name))
+                                            .map(data => data.surveys.map(survey => 
+                                                <option key={survey.survey_name} value={survey.survey_name}>{survey.survey_name}</option>
+                                            ))
+                                            // handleChange triggered when user selects the survey from the dropdown
+                                        }
+                                    </select>
+                            </div>
+                        </>
+                        )
+                        }
                     </div>
-                </form>
-            
                 </div>
-                )
-            }
-        </div>
-        </div>
-    </>
-  )
+                {
+                    inputValues.survey_name && (
+
+                    <div className={PostSurveyCSS.emailStyle}>
+                    <form onSubmit={handleEmailSubmit}>
+                        <div className={PostSurveyCSS.colWidth75}>
+
+                            <label htmlFor='to' className='form-label'>To</label>
+                            {/* for taking email input */}
+                            <input
+                                type='text'
+                                className='form-control'
+                                name='to'
+                                onChange={handleChange}
+                            />
+                        
+
+                            <label htmlFor='subject' className='form-label'>Subject</label>
+                            {/* for taking email input */}
+                            <input 
+                                type='text'
+                                className='form-control'
+                                name='subject'
+                                onChange={handleChange}
+                            />
+
+                            <label htmlFor='content' className='form-label'>Content</label>
+                            {/* body content containing the dynamic link */}
+                            
+                            <p className='form-control input-lg'>Hello, here's your link to take the survey - <br/><Link to={`/takeSurvey/${inputValues.category_name}/${inputValues.survey_name}`}>Take Survey<br/><br/><br/></Link></p>
+
+                            {errors.length!==0 && <p className='fs-6 text-center text-danger'>{errors}</p>}
+
+                            <button className={PostSurveyCSS.functionalBtns} type='submit'>Send</button>
+                        </div>
+                    </form>
+                
+                    </div>
+                    )
+                }
+            </div>
+            </div>
+            <ToastContainer />
+        </>
+    )
 }
 
 export default PostSurvey

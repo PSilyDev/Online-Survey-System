@@ -22,8 +22,6 @@ const addSurvey = async(req, res) => {
     // get survey details passed by the user
     const surveyDetails = req.body;
 
-    console.log('surveyDetails passed by user - ', surveyDetails);
-
     let surveyDocument = new SurveyModel(surveyDetails);
 
     let newSurvey = await surveyDocument.save()
@@ -34,23 +32,18 @@ const addSurvey = async(req, res) => {
 // controller for updating survey
 const updateSurvey = async(req, res) => {
     const surveyDetails = req.body;
-    // console.log('surveyDetails - ', surveyDetails)
-    // console.log('categoryId - ', surveyDetails.category_id)
-    // console.log('updated_surveys - ', surveyDetails.updated_surveys);
-    // console.log('updated_survey questions - ', surveyDetails.updated_surveys.questions);
     
-        let data = await SurveyModel.updateOne(
-            {_id: surveyDetails.category_id},
-            {$addToSet: {surveys: surveyDetails.updated_surveys}}
-        )
-        console.log('data returned - ', data);
-        if(data === null){
-            res.status(200).send({message: "survey not updated", payload: data})
-        }
-        else{
-            res.status(200).send({message: "survey updated", payload: data})
-        }
-    // res.send({ categoryId: surveyDetails.category_id, updatedSurveys: surveyDetails.updated_surveys})
+    
+    let data = await SurveyModel.updateOne(
+        {_id: surveyDetails.category_id},
+        {$addToSet: {surveys: surveyDetails.updated_surveys}}
+    )
+    if(data === null){
+        res.status(200).send({message: "survey not updated", payload: data})
+    }
+    else{
+        res.status(200).send({message: "survey updated", payload: data})
+    }
 }
 
 // controller for replacing survey
@@ -60,7 +53,6 @@ const replaceSurvey = async(req, res) => {
     let data = await SurveyModel.findOneAndUpdate(
         {_id: surveyDetails._id}, surveyDetails
     )
-    console.log('data returned - ', data);
 }
 
 
@@ -76,7 +68,6 @@ let transporter = nodemailer.createTransport({
 
 const sendEmail = async(req, res) => {
     const {to, subject, category_name, survey_name} = req.body;
-    console.log('pointer reahed here!', req.body)
     const surveyLink = `https://localhost:3000/takeSurvey/${category_name}/${survey_name}`
 
     const mailOptions = {
@@ -88,21 +79,13 @@ const sendEmail = async(req, res) => {
 
     transporter.sendMail(mailOptions, function(error, info) {
         if(error) {
-            console.log(error);
+            res.send({payload: error});
         }
         else{
-            console.log('Email sent successfully!')
+            res.send({payload : 'Email sent successfully!'})
         }
     })
 
-    // try{
-    //     await transporter.sendMail(mailOptions);
-    //     console.log(200).send('Email sent successfully!');
-    // }
-    // catch(error){
-    //     console.log('Error sending email : ', error);
-    //     res.status(500).send('Error sending email');
-    // }
 }
 
 // export controllers to survey-api

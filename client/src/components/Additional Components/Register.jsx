@@ -63,16 +63,19 @@ export default function Register() {
                 setErrors('Please enter valid password!')
             }
 
+            // validating confirm password is entered or not?
             else if(!registrationData.confirm_password || registrationData.confirm_password.trim() === ''){
                 setErrors("Please confirm password!")
             }
 
+            // validating is entered password matches the confirm password
             else if(registrationData.password !== registrationData.confirm_password){
                 setErrors("Password does not match!")
             }
 
             else
             {
+                // register the user
                 const res = await axios.post('http://localhost:4000/user-api/users', registrationData);
                 if(res.status === 201){
                     toast.success("Registration Successfull. Routing to Login", {autoClose: 2000});
@@ -100,33 +103,39 @@ export default function Register() {
 
                     <div className={`form-group ${RegisterCSS.formGroup}`}>
                         <div className={`row ${RegisterCSS.row}`}>
-                    
+                            {/* First name */}
                             <div className={`col ${RegisterCSS.col1}`}>
                                 <input type="text" className={`form-control ${RegisterCSS.formControl}`} name="first_name" placeholder="First Name" onChange={handleChange} />
                             </div>
-                    
+                            {/* Last name */}
                             <div className={`col ${RegisterCSS.col2}`}>
                                 <input type="text" className={`form-control ${RegisterCSS.formControl}`} name="last_name" placeholder="Last Name" onChange={handleChange} />
                             </div>
                         </div>
                     </div>
                     <div className={`form-group ${RegisterCSS.formGroup}`}>
+                        {/* username */}
                         <input type="text" className={`form-control ${RegisterCSS.formControl}`} name="username" placeholder="Username" onChange={handleChange} />
                     </div>
                     <div className={`form-group ${RegisterCSS.formGroup}`}>
+                        {/* email */}
                         <input type="email" className={`form-control ${RegisterCSS.formControl}`} name="email" placeholder="Email" onChange={handleChange} />
                     </div>
                     <div className={`form-group ${RegisterCSS.formGroup}`}>
+                        {/* password */}
                         <input type="password" className={`form-control ${RegisterCSS.formControl}`} name="password" placeholder="Password" onChange={handleChange} />
                     </div>
                     <div className={`form-group ${RegisterCSS.formGroup}`}>
+                        {/* Confirm password */}
                         <input type="password" className={`form-control ${RegisterCSS.formControl}`} name="confirm_password" placeholder="Confirm Password" onChange={handleConfirmPasswordChange} />
                     </div>
                     
                     {errors?.length !== 0 && <p className={errors !== 'Password matched!' ? "fs-6 text-center text-danger" : "fs-6 text-center text-success"}>{errors}</p>}
+                    
                     <div className={`form-group ${RegisterCSS.formGroup}`}>
                         <button type="submit" className="btn btn-success btn-md btn-block px-4">Register Now</button>
                     </div>
+                    
                     <div className='text-center'>Already have an account? <Link to='/login' className="link-item">Login</Link></div>
                 </form>
                 <ToastContainer />

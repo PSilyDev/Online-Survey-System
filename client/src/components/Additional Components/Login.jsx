@@ -1,6 +1,7 @@
 import LoginCSS from './LoginStyling.module.css';
 import axios from 'axios';
-import { LoginContext } from "../../../Context/LoginContext";
+
+import { LoginContext } from "../../Context/LoginContext";
 import { useContext, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 
@@ -25,8 +26,12 @@ export default function Login(){
         setErrors("")
     }
 
-    function handleLogin(response){
+
+    function handleLogin(response){             // called in hanleFormSubmit
+        // we'll get the token and user Onject as response
         const { token, user } = response.data;
+
+        // store in LocalStorage
         localStorage.setItem('token', token);
         localStorage.setItem('userCred', JSON.stringify(user));
 
@@ -34,6 +39,7 @@ export default function Login(){
 
         let updatedUserData = { "id" : data._id, "username": data.username, "email": data.email, "first_name": data.first_name, "last_name": data.last_name, "token": token }
 
+        // update the userData context
         setUserData(updatedUserData);
         setShowProfile(true);
 
@@ -57,12 +63,14 @@ export default function Login(){
             //now the form is validated and submitted we need to check whether the usernamee and the password matched the registered user data
 
             try{
+                // post the entered credentials to check if data present in DB
                 const res = await axios.post('http://localhost:4000/user-api/user', userData);
-                console.log('fetched data - ', res)
+                // console.log('fetched data - ', res)
+
                 if(res.data.message === "login success"){
                     handleLogin(res);
                    
-                    navigate("/addSurvey");
+                    navigate("/mainPage");
                     
                 }
                 else{
@@ -75,7 +83,7 @@ export default function Login(){
         }
     }
 
-    console.log('userData - ', userData);
+    // console.log('userData - ', userData);
     return(
         <>
             <div className={LoginCSS.loginForm}>
@@ -83,16 +91,22 @@ export default function Login(){
                     <h2>Login</h2>
                     <p className={LoginCSS.hintText}>Already registered? Login to you account</p>
 
+                    {/* username */}
                     <div className={`form-group ${LoginCSS.formGroup}`}>
                         <input type="text" className={`form-control ${LoginCSS.formControl}`} name="username" placeholder="Username" onChange={handleChange} />
                     </div>
+
+                    {/* password */}
                     <div className={`form-group ${LoginCSS.formGroup}`}>
                         <input type="password" className={`form-control ${LoginCSS.formControl}`} name="password" placeholder="Password" onChange={handleChange} />
-                    </div>         
+                    </div>      
+
                     {errors?.length !== 0 && <p className="fs-6 text-center text-danger">{errors}</p>}
+                    
                     <div className={`form-group ${LoginCSS.formGroup}`}>
                         <button type="submit" className="btn btn-success btn-md btn-block px-4">Login</button>
                     </div>
+                    
                     <div className='text-center'>Don't have an account? <Link to='/register' className="link-item">Register</Link></div>
                 </form>
             </div>

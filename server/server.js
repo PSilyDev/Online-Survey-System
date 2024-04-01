@@ -1,14 +1,16 @@
 //step 1 - create express app
 const exp = require('express')
 const app = exp()
-const cors = require('cors')
+// const cors = require('cors')
 
 require('dotenv').config()
 
 // step 2 - connect to REACT app
 const path = require('path')
-// app.use(exp.static(path.join(__dirname, '../client/build')))
-app.use(cors())
+console.log("dirname : ", __dirname)
+app.use(exp.static(path.join(__dirname, '../client/build')))
+// BUILT IN MIDDLEWARE for serving static files like images, css, js, other assets from specified direc
+// app.use is a method for mounting middlewares
 
 //step 3 - add body parsing middleware (express.json)
 app.use(exp.json())
@@ -38,7 +40,7 @@ app.use('/response-api', responseApp)
 // -------------------------------------------------------
 
 
-app.use((req, res, next) => {
+app.use((req, res, next) => {       //app starts from home(index.html)
     res.sendFile(path.join(__dirname, '../client/build/index.html'))
 })
 

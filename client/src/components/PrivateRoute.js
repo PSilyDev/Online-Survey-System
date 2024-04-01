@@ -1,42 +1,32 @@
-import { useContext, useEffect, useRef } from "react";
+import { useContext, useEffect } from "react";
 import { LoginContext } from "../Context/LoginContext";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 
+function PrivateRoute({ children }) {       // PrivateRoute acts as a partent compoenent
+    //get the location of children component
+    const location = useLocation();     // hooke from react router DOM is used to get the current location pf the user
 
-function PrivateRoute({children}) {
-    const location = useLocation();
-    const {showProfile, refreshed} = useContext(LoginContext);
-    const navigate = useNavigate();
-    // const prevLocationRef = useRef(null);
+    const { showProfile } = useContext(LoginContext);
 
-
+    // store the current location in the sessionStorage except login
     useEffect(() => {
-        // console.log('Session storage prev path - ', sessionStorage.getItem('prevPath'));
-        if(showProfile && location.pathname !== '/login') {
-            sessionStorage.setItem('prevPath', location.pathname);
-            // console.log('stored in sessionStorage : ', location.pathname);
+        if (showProfile && location.pathname !== "/login") {
+            sessionStorage.setItem("prevPath", location.pathname);
         }
-        // prevLocationRef.current = location.pathname;
     }, [showProfile, location.pathname]);
 
-    
-   
-        // console.log('pointer has reached here');
-        // showProfile ? children : <Navigate to="/login"/>
-        // showProfile ? children : <Navigate to='/login'></Navigate>
-        if(!showProfile && location.pathname !== '/login') {
-
-            const prevPath = sessionStorage.getItem('prevPath');
-            if(prevPath){
-                return <Navigate to={prevPath} />
-            }
-            else{
-                return <Navigate to='/login' />
-            }
+    // showprofile is false -> page refreshed
+    if (!showProfile && location.pathname !== "/login") {
+        // get path from session storage and naviagte
+        const prevPath = sessionStorage.getItem("prevPath");
+        if (prevPath) {
+            return <Navigate to={prevPath} />;
+        } else {
+            return <Navigate to="/login" />;
         }
-        return children;
-    
+    }
+    return children;
 }
 
-export default PrivateRoute
+export default PrivateRoute;

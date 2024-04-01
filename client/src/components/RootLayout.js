@@ -1,11 +1,12 @@
 import React from "react";
+import './RootLayout.css';
+
 import { useContext } from "react";
 import { LoginContext } from "../Context/LoginContext";
+import { Outlet, useLocation, Link } from "react-router-dom/dist";
+
 import Header from "./Header/Header";
-import { Outlet, useLocation } from "react-router-dom/dist";
-import { Link } from "react-router-dom/dist";
-import './RootLayout.css';
-import Footer from "../components/Header/Header Components/Footer";
+import Footer from "./Additional Components/Footer";
 
 
 export default function RootLayout(){ 
@@ -29,10 +30,11 @@ export default function RootLayout(){
                         <div className="seperator"></div> 
                         <Link to='postSurvey' className={location.pathname === '/postSurvey' ? 'active' : ''}>Post Survey</Link> 
                         <div className="seperator"></div> 
-                        <Link to='result' className={location.pathname === '/result' ? 'active' : ''}>View Response</Link> 
+                        <Link to='result' className={location.pathname === '/result' ? 'active' : ''}>View Responses</Link> 
                     </div> 
                     <div className="main-layout" style={{minHeight:'90vh'}}> 
                         <Outlet /> 
+                        {/* Outlet is a component used to render child routes within a parent route component(RootLayout), serves as a placeholder where child routes are rendered */}
                     </div> 
                     <div className="footerbar">
                         <Footer />
