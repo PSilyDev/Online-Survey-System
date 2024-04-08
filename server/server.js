@@ -50,4 +50,4 @@ app.use((err, req, res, next) => {
 })
 
 // step 7 - assign port number to the express app
-app.listen(process.env.PORT, () => console.log('Web server listening on port 4000'));
+app.listen(process.env.PORT, () => console.log('Web Server listening on port 4000'));
