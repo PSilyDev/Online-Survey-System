@@ -57,18 +57,17 @@ const replaceSurvey = async(req, res) => {
 
     try{
         const surveyDetails = req.body;
-        console.log('surveyDetails passed - ', surveyDetails);
-        const objectId = new mongoose.Types.ObjectId(surveyDetails._id);
-        const updatedSurvey = await SurveyModel.find(console.log(_id === objectId))
-        // await SurveyModel.findOneAndReplace(
-        //     { _id: objectId},
-        //     surveyDetails,
-        //     { new: true}
-        // );
+        // console.log('surveyDetails passed - ', surveyDetails);
+        // const objectId = new mongoose.Types.ObjectId(surveyDetails._id);
+        const updatedSurvey = 
+        await SurveyModel.updateOne(
+            {category_name: surveyDetails.category_name},
+            {$set: surveyDetails}
+        );
 
-        // if(!updateSurvey){
-        //     console.log('survey not found')
-        // }
+        if(!updateSurvey){
+            console.log('survey not found')
+        }
         console.log('survey updated - ', updatedSurvey);
     }
     catch(error){

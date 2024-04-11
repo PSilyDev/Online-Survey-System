@@ -17,7 +17,7 @@ import EditProfile from './components/Additional Components/EditProfile'
 import RootLayout from './components/RootLayout';
 import AddSurvey from './components/Core Components/AddSurvey';
 // import ViewSurvey from './components/Core Components/ViewSurvey';
-import BiewSurvey from './components/Core Components/BiewSurvey';
+import ViewSurvey from './components/Core Components/ViewSurvey';
 import TakeSurvey from './components/Core Components/TakeSurvey';
 import Result from './components/Core Components/Result';
 import PostSurvey from './components/Core Components/PostSurvey';
@@ -142,7 +142,7 @@ function App() {
           path:'viewSurvey',
           element: 
           <PrivateRoute>
-            <BiewSurvey />
+            <ViewSurvey />
           </PrivateRoute>
         },
         {
