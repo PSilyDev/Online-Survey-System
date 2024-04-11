@@ -1,4 +1,5 @@
 // import the SurveyModel schema from the db
+const { default: mongoose } = require('mongoose');
 const SurveyModel = require('../storeSurveysDB')
 const nodemailer = require('nodemailer');
 require('dotenv').config()
@@ -48,11 +49,31 @@ const updateSurvey = async(req, res) => {
 
 // controller for replacing survey
 const replaceSurvey = async(req, res) => {
-    const surveyDetails = req.body;
+    // const surveyDetails = req.body;
+    // console.log('surveyDetails - ', surveyDetails);
+    // let data = await SurveyModel.findOneAndUpdate(
+    //     {_id: surveyDetails._id}, surveyDetails
+    // )
 
-    let data = await SurveyModel.findOneAndUpdate(
-        {_id: surveyDetails._id}, surveyDetails
-    )
+    try{
+        const surveyDetails = req.body;
+        console.log('surveyDetails passed - ', surveyDetails);
+        const objectId = new mongoose.Types.ObjectId(surveyDetails._id);
+        const updatedSurvey = await SurveyModel.find(console.log(_id === objectId))
+        // await SurveyModel.findOneAndReplace(
+        //     { _id: objectId},
+        //     surveyDetails,
+        //     { new: true}
+        // );
+
+        // if(!updateSurvey){
+        //     console.log('survey not found')
+        // }
+        console.log('survey updated - ', updatedSurvey);
+    }
+    catch(error){
+        console.log('error replacing survey - ', error)
+    }
 }
 
 
