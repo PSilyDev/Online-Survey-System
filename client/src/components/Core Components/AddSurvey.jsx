@@ -7,7 +7,10 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 
-function AddSurvey() {
+import UpdatedComponent from './withFetchedData';
+
+
+function AddSurvey({name}) {
 
     const {setShowEditButton} = useContext(LoginContext);
 
@@ -371,7 +374,6 @@ function AddSurvey() {
         setInputSurveyData({ ...inputSurveyData, [name]: value});
     }
 
-
   return (
     <>
         <div className={AddSurveyCSS.containerStyle}>
@@ -522,8 +524,9 @@ function AddSurvey() {
             </form>
         </div>
         <ToastContainer />
+        
     </>
   );
 }
 
-export default AddSurvey;
+export default UpdatedComponent(AddSurvey);
