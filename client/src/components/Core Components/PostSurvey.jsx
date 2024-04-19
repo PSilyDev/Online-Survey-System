@@ -8,11 +8,15 @@ import { LoginContext } from '../../Context/LoginContext';
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-function PostSurvey() {
+import UpdatedComponent from './withFetchedData';
+
+function PostSurvey(props) {
+
+    const fetchedData = props.data;
 
     const {setShowEditButton} = useContext(LoginContext);
 
-    const [fetchedData, setFetchedData] = useState([])
+    // const [fetchedData, setFetchedData] = useState([])
 
     const [inputValues, setInputValues] = useState({
         category_name:'',
@@ -23,21 +27,9 @@ function PostSurvey() {
 
     const [errors, setErrors] = useState('')
 
-
-    //fetching all the categoeries from DB
     useEffect(() => {
-        // if user didi not update the profile and directly moved to another component
         setShowEditButton(true);
-
-        axios.get('http://localhost:4000/survey-api/surveys', {
-            headers: {
-                Authorization: `Bearer ${localStorage.getItem('token')}`
-            }
-        })
-        .then(response => setFetchedData(response.data.payload || []))
-        .catch(error => console.log('Error fetching categories : ', error));
-    }, []);
-
+    })
 
     async function handleEmailSubmit(event){
         event.preventDefault();
@@ -170,4 +162,4 @@ function PostSurvey() {
     )
 }
 
-export default PostSurvey
+export default UpdatedComponent(PostSurvey);

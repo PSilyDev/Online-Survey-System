@@ -66,9 +66,9 @@ const replaceSurvey = async(req, res) => {
         );
 
         if(!updateSurvey){
-            console.log('survey not found')
+            res.status(200).send({message: "survey not updated"})
         }
-        console.log('survey updated - ', updatedSurvey);
+        res.status(200).send({message: "survey updated", payload: updatedSurvey})
     }
     catch(error){
         console.log('error replacing survey - ', error)

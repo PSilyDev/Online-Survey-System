@@ -1,0 +1,1 @@
+divide add survey in different components

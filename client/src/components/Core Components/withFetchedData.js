@@ -12,9 +12,7 @@ const UpdatedComponent = (OriginalComponent) => {
 
         console.log('fetched survey data (hoc) - ', fetchedSurveyData);
         useEffect(() => {
-            // if user did not edit profile and directly moved to another component
-            // setShowEditButton(true);
-    
+           
             try{
                 // get survey data from DB and store in fetchedSurveyData
                 axios.get('http://localhost:4000/survey-api/surveys', {

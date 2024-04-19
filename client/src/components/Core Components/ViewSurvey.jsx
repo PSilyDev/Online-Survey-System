@@ -1,12 +1,21 @@
 import React, { useState } from 'react';
 import { useEffect } from 'react';
 import axios from 'axios';
-import ViewSurveyCSS from './css/ViewSurveyStyling.module.css'
+import ViewSurveyCSS from './css/ViewSurveyStyling.module.css';
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { useNavigate } from 'react-router-dom';
+
+import UpdatedComponent from './withFetchedData';
 
 
-export default function BiewSurvey(){
+function ViewSurvey(props){
 
-    const [fetchedSurveyData, setFetchedSurveyData] = useState([]);
+    const navigate = useNavigate();
+
+    const fetchedSurveyData = props.data;
+    console.log('inside view survey - ', fetchedSurveyData);
+    // const [fetchedSurveyData, setFetchedSurveyData] = useState([]);
 
     const [inputSurveyData, setInputSurveyData] = useState({
         currentQueIndex: 0,
@@ -14,24 +23,35 @@ export default function BiewSurvey(){
 
     const [optionSelected, setOptionSelected] = useState({})
 
-    useEffect(() => {
-        axios.get('http://localhost:4000/survey-api/surveys', {
-            headers: {
-                Authorization: `Bearer ${localStorage.getItem('token')}`
-            }
-        })
-            .then(response => setFetchedSurveyData(response.data.payload || []))
-            .catch(error => console.log("Error fetching data : ", error))
-    }, [])
+    // useEffect(() => {
+    //     axios.get('http://localhost:4000/survey-api/surveys', {
+    //         headers: {
+    //             Authorization: `Bearer ${localStorage.getItem('token')}`
+    //         }
+    //     })
+    //         .then(response => setFetchedSurveyData(response.data.payload || []))
+    //         .catch(error => console.log("Error fetching data : ", error))
+    // }, [])
 
-    console.log('fetched Data - ', fetchedSurveyData);
+    // console.log('fetched Data - ', fetchedSurveyData);
 
     // event handler function for inputSurveyData
-    function handleChange(event){
+    function handleChange(event, index){
         let name = event.target.name;
         let value = event.target.value;
 
-        setInputSurveyData({...inputSurveyData, [name]: value});
+        if(name === 'category_name'){
+            let updatedData = {
+                ...inputSurveyData,
+                "category_index": index,
+                [name]: value
+            }
+            console.log('index of category - ', index)
+            setInputSurveyData(updatedData);
+        }
+        else{
+            setInputSurveyData({...inputSurveyData, [name]: value});
+        }
     }
 
     function handleOptionSelected(event){
@@ -80,20 +100,31 @@ export default function BiewSurvey(){
         if(name === 'editBtn'){
             setOptionSelected({...optionSelected, finalSubmitBtn: true});
         }
+
+        // if(name === 'next'){
+        //     if(inputSurveyData.currentQueIndex === survey.questions.length-1){
+        //         setOptionSelected({...optionSelected, finalSubmitBtn: true});
+        //     }
+        // }
     }
 
     async function handleSubmit(event){
         event.preventDefault();
-        console.log('before submission : ', fetchedSurveyData[0]);
+        console.log('before submission : ', fetchedSurveyData[inputSurveyData.category_index-1]);
         // setOptionSelected({...optionSelected, editBtn: false});
         try{
-            const localAPI = await axios.put('http://localhost:4000/survey-api/replaceSurvey', fetchedSurveyData[0], {
+            const localAPI = await axios.put('http://localhost:4000/survey-api/replaceSurvey', fetchedSurveyData[inputSurveyData.category_index-1], {
                 headers:{
                     Authorization: `Bearer ${localStorage.getItem('token')}`
                 }
             })
+            console.log('after submission : ', localAPI.data.message);
             
             if(localAPI.data.message === 'survey updated'){
+                toast.success('Updated Successfully!', {autoClose: 2000})
+                setTimeout(() => {
+                navigate('/postSurvey')
+                }, 2500)
                 console.log('survey updated successfully!')
             }
             else if(localAPI.data.message === 'survey not updated'){
@@ -106,9 +137,9 @@ export default function BiewSurvey(){
 
     }
 
-    // console.log('input Data - ', inputSurveyData);
+    console.log('input Data - ', inputSurveyData);
 
-    // console.log('option Data - ', optionSelected);
+    console.log('option Data - ', optionSelected);
 
     // console.log('updated Data - ', fetchedSurveyData);
 
@@ -120,7 +151,11 @@ export default function BiewSurvey(){
                         <div className={ViewSurveyCSS.dropdownStyle}>
                             <div className={ViewSurveyCSS.colWidth45}>
                                 
-                                <select id='category' className='form-select' value={inputSurveyData.category_name} name='category_name' onChange={(event) => {handleChange(event); handleOptionSelected(event);}}>
+                                <select id='category' className='form-select' value={inputSurveyData.category_name} name='category_name' onChange={(event) => {
+                                    const selectedIndex = event.target.selectedIndex;
+                                    handleChange(event, selectedIndex); 
+                                    handleOptionSelected(event);
+                                    }}>
                                     <option value=''>Select Category</option>
                                     {
                                         fetchedSurveyData.map(data => (
@@ -213,7 +248,7 @@ export default function BiewSurvey(){
                                             {
 
                                                 (inputSurveyData.currentQueIndex < survey.questions.length - 1 && !optionSelected.editBtn) &&
-                                                <button className={ViewSurveyCSS.functionalBtns} name='next' onClick={handleQuestionChange}>Next</button>
+                                                <button className={ViewSurveyCSS.functionalBtns} name='next' onClick={(event) => {handleButtons(event); handleQuestionChange(event)}}>Next</button>
                                             }
                                             {
                                                 (inputSurveyData.currentQueIndex >= 1 && !optionSelected.editBtn) && 
@@ -229,7 +264,8 @@ export default function BiewSurvey(){
                                                 
                                             }
                                             {
-                                                (inputSurveyData.currentQueIndex === survey.questions.length-1 || optionSelected.finalSubmitBtn?true: false) && !optionSelected.finalSubmitBtn &&
+                                                // (inputSurveyData.currentQueIndex === survey.questions.length-1 || optionSelected.finalSubmitBtn?true: false) && optionSelected.finalSubmitBtn &&
+                                                (inputSurveyData.currentQueIndex === survey.questions.length-1) && !optionSelected.editBtn &&
                                                 <button className={ViewSurveyCSS.functionalBtns} name='finalSubmitBtn' onClick={(event) => {handleOptionSelected(event); handleSubmit(event);}}>Submit</button>
                                             }
                                         </div>
@@ -244,6 +280,9 @@ export default function BiewSurvey(){
                 }
                 </div>
             </div>
+            <ToastContainer />
         </>
     )
 }
+
+export default UpdatedComponent(ViewSurvey);
