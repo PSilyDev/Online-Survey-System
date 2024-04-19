@@ -10,8 +10,11 @@ import "react-toastify/dist/ReactToastify.css";
 import UpdatedComponent from './withFetchedData';
 
 
-function AddSurvey({name}) {
+function AddSurvey(props) {
 
+    //for storing fetched data from storeQuestionDB.json/DB
+    const fetchedSurveyData = props.data;
+    
     const {setShowEditButton} = useContext(LoginContext);
 
     const navigate = useNavigate();
@@ -20,9 +23,6 @@ function AddSurvey({name}) {
         surveys: []
     })//storing surveyData that is to be put, post on json-server/DB
 
-    //for storing fetched data from storeQuestionDB.json/DB
-    const [fetchedSurveyData, setFetchedSurveyData] = useState([]);
-    
     const [errors, setErrors] = useState("")
 
     // for storing input values
@@ -44,27 +44,9 @@ function AddSurvey({name}) {
         show_new_que: false
     })
 
-    
     useEffect(() => {
-        // if user did not edit profile and directly moved to another component
         setShowEditButton(true);
-
-        try{
-            // get survey data from DB and store in fetchedSurveyData
-            axios.get('http://localhost:4000/survey-api/surveys', {
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem('token')}`
-                }
-            })
-            .then(response => setFetchedSurveyData(response.data.payload || []))
-            .catch(error => console.log('Error fetching categories : ', error));
-        }
-        catch(error){
-            console.log('Error fetching survey data : ', error);
-        }
-    }, [])
-
-    
+    })
 
     // Note - we are taking categoryNameValue because we have to first validate whether category, survey exists and then store in surveyInfo\
     
