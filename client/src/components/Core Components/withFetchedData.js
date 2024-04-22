@@ -10,7 +10,11 @@ const UpdatedComponent = (OriginalComponent) => {
         const [fetchedSurveyData, setFetchedSurveyData] = useState([]);
         const [isLoading, setIsLoading] = useState(true);
 
+        const [postData, setPostData] = useState('initial data....');
+        // const [replyReceived, setReplyReceived] = useState();
+
         console.log('fetched survey data (hoc) - ', fetchedSurveyData);
+        console.log('dataToPost data - ', postData);
         useEffect(() => {
            
             try{
@@ -31,12 +35,40 @@ const UpdatedComponent = (OriginalComponent) => {
             }
         }, [])
 
+        const dataToPost = async (dataReceived, operation, url) => {
+            // setPostData('data updated from child component...')
+            console.log('data recived - ', dataReceived);
+            console.log('operation - ', operation);
+            console.log('url - ', url);
+
+            // return ('data returned from function.')
+            let replyReceived;
+            if(operation === 'post'){
+                replyReceived = await axios.post(url, dataReceived, {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('token')}`
+                    }
+                })
+                
+            }
+            if(operation === 'put'){
+                replyReceived = await axios.put(url, dataReceived, {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('token')}`
+                    }
+                })
+                
+            }
+
+            return replyReceived;
+        }
+
         if(isLoading){
             return <div>Loading...</div>
         }
 
         return(
-            <OriginalComponent data={fetchedSurveyData} />
+            <OriginalComponent data={fetchedSurveyData} postFunction={dataToPost} />
         )
     }
 

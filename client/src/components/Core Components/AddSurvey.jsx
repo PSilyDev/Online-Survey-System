@@ -281,31 +281,37 @@ function AddSurvey(props) {
     async function handleQuestionSubmit(event){
         event.preventDefault();
 
+        let postData;
+        let operation;
+        let url;
+
         try{
             if(inputSurveyData.flag === 2){
                 // console.log('neither category nor survey exists!')
                 // if flag == 2, we'll be posting the surevyInfo that has the category also
-                const localAPI = await axios.post('http://localhost:4000/survey-api/survey', surveyInfo, {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem('token')}`
-                    }
-                });
+
+                postData = surveyInfo;
+                operation = 'post';
+                url = 'http://localhost:4000/survey-api/survey'
+
+
             }
             else if(inputSurveyData.flag === 1){
                 // console.log('category exists, category - ', fetchedSurveyData.find(category => category._id === inputSurveyData.dupCategoryId)._id)
                 // console.log('category exists, surveys - ', [...fetchedSurveyData.find(category => category._id === inputSurveyData.dupCategoryId).surveys, ...surveyInfo.surveys])
                 
                 // if flag == 1, we'll update the DB using put method
-                const localAPI = await axios.put('http://localhost:4000/survey-api/survey', {
+
+                postData = {
                     category_id: fetchedSurveyData.find(category => category._id === inputSurveyData.dupCategoryId)._id,
                     updated_surveys: [...fetchedSurveyData.find(category => category._id === inputSurveyData.dupCategoryId).surveys, ...surveyInfo.surveys],
-            },
-            {
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem('token')}`
-                }
-            });
+                };
+                operation = 'put';
+                url = 'http://localhost:4000/survey-api/survey'
+
             }
+
+            console.log('pointer is here - ', await props.postFunction(postData, operation, url).data.message);
             
             // reseting the surveyInfo state
             setSurveyInfo({
@@ -338,9 +344,9 @@ function AddSurvey(props) {
             toast.success("Survey submitted successfully!",{
                 autoClose: 2000
             })
-            setTimeout(() => {
-                navigate('/viewSurvey')
-            }, 2500);
+            // setTimeout(() => {
+            //     navigate('/viewSurvey')
+            // }, 2500);
 
         } catch(error){
             console.log('Error adding survey: ', error);
@@ -359,6 +365,7 @@ function AddSurvey(props) {
   return (
     <>
         <div className={AddSurveyCSS.containerStyle}>
+            {/* <button onClick={() => props.postFunction('hello')}>Click</button> */}
             <form onSubmit={handleQuestionSubmit}>
                 <div className={AddSurveyCSS.rowStyle}>
                     
