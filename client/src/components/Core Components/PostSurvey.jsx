@@ -9,16 +9,17 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 import UpdatedComponent from './withFetchedData';
+import CategorySurveyDropdown from '../Reusable Components/CategorySurveyDropdown';
 
 function PostSurvey(props) {
 
-    const fetchedData = props.data;
+    const fetchedSurveyData = props.data;
 
     const {setShowEditButton} = useContext(LoginContext);
 
-    // const [fetchedData, setFetchedData] = useState([])
+    // const [fetchedSurveyData, setfetchedSurveyData] = useState([])
 
-    const [inputValues, setInputValues] = useState({
+    const [inputSurveyData, setInputSurveyData] = useState({
         category_name:'',
         survey_name: '',
         to:'',
@@ -35,17 +36,17 @@ function PostSurvey(props) {
         event.preventDefault();
 
         // check if to is enetered
-        if(!inputValues.to || inputValues.to.trim() === ''){
+        if(!inputSurveyData.to || inputSurveyData.to.trim() === ''){
             setErrors("Please enter 'To'!")
         }
         
         // check if subject is enetered
-        else if(!inputValues.subject || inputValues.subject.trim() === ''){
+        else if(!inputSurveyData.subject || inputSurveyData.subject.trim() === ''){
             setErrors("Please enter subject")
         }
         else{
-            setInputValues({...inputValues, category_name: inputValues.category_name, survey_name: inputValues.survey_name})
-            const localAPI = await axios.post('http://localhost:4000/survey-api/sendEmail', inputValues, {
+            setInputSurveyData({...inputSurveyData, category_name: inputSurveyData.category_name, survey_name: inputSurveyData.survey_name})
+            const localAPI = await axios.post('http://localhost:4000/survey-api/sendEmail', inputSurveyData, {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem('token')}`
                     }
@@ -68,94 +69,59 @@ function PostSurvey(props) {
         let name = event.target.name;
         let value = event.target.value;
 
-        setInputValues({...inputValues, [name]: value});
+        setInputSurveyData({...inputSurveyData, [name]: value});
+    }
+
+    function handleCategorySurvey(dataPassed) {
+        console.log('(ViewSurvey) dataReceived - ', dataPassed);
+
+        setInputSurveyData({...inputSurveyData, ...dataPassed});
     }
 
     return (
         <>
-            {/* selecting the category fetched from the DB */}
-            <div className={PostSurveyCSS.postSurvey}>
+            <CategorySurveyDropdown data={fetchedSurveyData} updatingFunction={handleCategorySurvey} />
             <div className={PostSurveyCSS.containerStyle}>
-                <div className={PostSurveyCSS.rowStyle}>
-                    <div className={PostSurveyCSS.dropdownStyle}>
+            {
+                inputSurveyData.survey_name && (
 
-                        {/* category name */}
-                        <div className={PostSurveyCSS.colWidth45}>
-                            <select name='category_name' className='form-select' value={inputValues.category_name} required onChange={handleChange}>
-                                <option value=''>Select Category</option>
-                                {
-                                    // hanndleChange event triggered when user slects the category
-                                    fetchedData.map(data => (
-                                    <option key={data._id} value={data.category_name}>{data.category_name}</option>
-                                    ))
-                                }
-                            </select>
-                        </div>
-                
-                        {
-                        // if the category selected render survey dropdown
-                        inputValues.category_name && (
-                        <>
+                <div className={PostSurveyCSS.emailStyle}>
+                <form onSubmit={handleEmailSubmit}>
+                    <div className={PostSurveyCSS.colWidth75}>
 
-                            {/* survey name */}
-                            <div className={PostSurveyCSS.colWidth45}>
-                                    <select name='survey_name' className='form-select' value={inputValues.survey_name} required onChange={handleChange}>
-                                        <option value="">Select Survey</option>
-                                        {
-                                            fetchedData.filter(data => (data.category_name === inputValues.category_name))
-                                            .map(data => data.surveys.map(survey => 
-                                                <option key={survey.survey_name} value={survey.survey_name}>{survey.survey_name}</option>
-                                            ))
-                                            // handleChange triggered when user selects the survey from the dropdown
-                                        }
-                                    </select>
-                            </div>
-                        </>
-                        )
-                        }
-                    </div>
-                </div>
-                {
-                    inputValues.survey_name && (
+                        <label htmlFor='to' className='form-label'>To</label>
+                        {/* for taking email input */}
+                        <input
+                            type='text'
+                            className='form-control'
+                            name='to'
+                            onChange={handleChange}
+                        />
+                    
 
-                    <div className={PostSurveyCSS.emailStyle}>
-                    <form onSubmit={handleEmailSubmit}>
-                        <div className={PostSurveyCSS.colWidth75}>
+                        <label htmlFor='subject' className='form-label'>Subject</label>
+                        {/* for taking email input */}
+                        <input 
+                            type='text'
+                            className='form-control'
+                            name='subject'
+                            onChange={handleChange}
+                        />
 
-                            <label htmlFor='to' className='form-label'>To</label>
-                            {/* for taking email input */}
-                            <input
-                                type='text'
-                                className='form-control'
-                                name='to'
-                                onChange={handleChange}
-                            />
+                        <label htmlFor='content' className='form-label'>Content</label>
+                        {/* body content containing the dynamic link */}
                         
+                        <p className='form-control input-lg'>Hello, here's your link to take the survey - <br/><Link to={`/takeSurvey/${inputSurveyData.category_name}/${inputSurveyData.survey_name}`}>Take Survey<br/><br/><br/></Link></p>
 
-                            <label htmlFor='subject' className='form-label'>Subject</label>
-                            {/* for taking email input */}
-                            <input 
-                                type='text'
-                                className='form-control'
-                                name='subject'
-                                onChange={handleChange}
-                            />
+                        {errors.length!==0 && <p className='fs-6 text-center text-danger'>{errors}</p>}
 
-                            <label htmlFor='content' className='form-label'>Content</label>
-                            {/* body content containing the dynamic link */}
-                            
-                            <p className='form-control input-lg'>Hello, here's your link to take the survey - <br/><Link to={`/takeSurvey/${inputValues.category_name}/${inputValues.survey_name}`}>Take Survey<br/><br/><br/></Link></p>
-
-                            {errors.length!==0 && <p className='fs-6 text-center text-danger'>{errors}</p>}
-
-                            <button className={PostSurveyCSS.functionalBtns} type='submit'>Send</button>
-                        </div>
-                    </form>
-                
+                        <button className={PostSurveyCSS.functionalBtns} type='submit'>Send</button>
                     </div>
-                    )
-                }
-            </div>
+                </form>
+            
+                </div>
+                )
+            }
             </div>
             <ToastContainer />
         </>
