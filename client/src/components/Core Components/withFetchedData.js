@@ -13,8 +13,8 @@ const UpdatedComponent = (OriginalComponent) => {
         const [postData, setPostData] = useState('initial data....');
         // const [replyReceived, setReplyReceived] = useState();
 
-        console.log('fetched survey data (hoc) - ', fetchedSurveyData);
-        console.log('dataToPost data - ', postData);
+        // console.log('fetched survey data (hoc) - ', fetchedSurveyData);
+        // console.log('dataToPost data - ', postData);
         useEffect(() => {
            
             try{
@@ -24,7 +24,8 @@ const UpdatedComponent = (OriginalComponent) => {
                         Authorization: `Bearer ${localStorage.getItem('token')}`
                     }
                 })
-                .then(response => { console.log('hoc - ', response)
+                .then(response => { 
+                    // console.log('hoc - ', response)
                     setFetchedSurveyData(response.data.payload || [])
                     setIsLoading(false);
                 })
@@ -37,9 +38,9 @@ const UpdatedComponent = (OriginalComponent) => {
 
         const dataToPost = async (dataReceived, operation, url) => {
             // setPostData('data updated from child component...')
-            console.log('data recived - ', dataReceived);
-            console.log('operation - ', operation);
-            console.log('url - ', url);
+            console.log('(HOC) data recived - ', dataReceived);
+            console.log('(HOC) operation - ', operation);
+            console.log('(HOC) url - ', url);
 
             // return ('data returned from function.')
             let replyReceived;

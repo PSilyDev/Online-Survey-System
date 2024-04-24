@@ -26,6 +26,7 @@ import PrivateRoute from './components/PrivateRoute';
 import Test from './components/Additional Components/Test';
 import TermsOfService from './components/Additional Components/TermsOfService';
 import AboutUs from './components/Additional Components/AboutUs';
+import CategorySurveyInput from './components/Reusable Components/CategorySurveyInput';
 
 function App() {
 
@@ -136,6 +137,7 @@ function App() {
           element:
           <PrivateRoute>
             <AddSurvey />
+            {/* <CategorySurveyInput /> */}
           </PrivateRoute>
         },
         {
