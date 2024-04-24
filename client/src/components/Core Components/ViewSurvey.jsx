@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useEffect } from 'react';
 import axios from 'axios';
 import ViewSurveyCSS from './css/ViewSurveyStyling.module.css';
 import { toast, ToastContainer } from "react-toastify";
@@ -7,6 +6,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from 'react-router-dom';
 
 import UpdatedComponent from './withFetchedData';
+import CategorySurveyDropdown from '../Reusable Components/CategorySurveyDropdown';
 
 
 function ViewSurvey(props){
@@ -14,7 +14,7 @@ function ViewSurvey(props){
     const navigate = useNavigate();
 
     const fetchedSurveyData = props.data;
-    console.log('inside view survey - ', fetchedSurveyData);
+    console.log('(ViewSurvey) fetchedSurveyData - ', fetchedSurveyData);
     // const [fetchedSurveyData, setFetchedSurveyData] = useState([]);
 
     const [inputSurveyData, setInputSurveyData] = useState({
@@ -23,36 +23,6 @@ function ViewSurvey(props){
 
     const [optionSelected, setOptionSelected] = useState({})
 
-    // useEffect(() => {
-    //     axios.get('http://localhost:4000/survey-api/surveys', {
-    //         headers: {
-    //             Authorization: `Bearer ${localStorage.getItem('token')}`
-    //         }
-    //     })
-    //         .then(response => setFetchedSurveyData(response.data.payload || []))
-    //         .catch(error => console.log("Error fetching data : ", error))
-    // }, [])
-
-    // console.log('fetched Data - ', fetchedSurveyData);
-
-    // event handler function for inputSurveyData
-    function handleChange(event, index){
-        let name = event.target.name;
-        let value = event.target.value;
-
-        if(name === 'category_name'){
-            let updatedData = {
-                ...inputSurveyData,
-                "category_index": index,
-                [name]: value
-            }
-            console.log('index of category - ', index)
-            setInputSurveyData(updatedData);
-        }
-        else{
-            setInputSurveyData({...inputSurveyData, [name]: value});
-        }
-    }
 
     function handleOptionSelected(event){
         let name = event.target.name;
@@ -101,11 +71,6 @@ function ViewSurvey(props){
             setOptionSelected({...optionSelected, finalSubmitBtn: true});
         }
 
-        // if(name === 'next'){
-        //     if(inputSurveyData.currentQueIndex === survey.questions.length-1){
-        //         setOptionSelected({...optionSelected, finalSubmitBtn: true});
-        //     }
-        // }
     }
 
     async function handleSubmit(event){
@@ -137,149 +102,113 @@ function ViewSurvey(props){
 
     }
 
-    console.log('input Data - ', inputSurveyData);
 
-    console.log('option Data - ', optionSelected);
+    function handleCategorySurvey(dataPassed) {
+        // console.log('(ViewSurvey) dataReceived - ', dataPassed);
 
-    // console.log('updated Data - ', fetchedSurveyData);
+        setInputSurveyData({...inputSurveyData, ...dataPassed});
+        setOptionSelected({...optionSelected, survey_name: true});
+    }
+
+
 
     return(
         <>
-            <div className={ViewSurveyCSS.viewSurvey}>
-                <div className={ViewSurveyCSS.containerStyle}>
-                    <div className={ViewSurveyCSS.rowStyle}>
-                        <div className={ViewSurveyCSS.dropdownStyle}>
-                            <div className={ViewSurveyCSS.colWidth45}>
+            <CategorySurveyDropdown data={fetchedSurveyData} updatingFunction={handleCategorySurvey} />
+            <div className={ViewSurveyCSS.containerStyle}>
+            {
+                optionSelected.survey_name && (
+
+                    <div>
+                        {
+                                // ALTERNATE - 
+                            //     fetchedSurveyData.find(data => data.category_name === inputSurveyData.category_name) // return an object where the category_name matches
+                            //         .surveys.find(data => data.survey_name === inputSurveyData.survey_name) // in the surveys property of the object, find the survey where survey_name matches and return that object
+
+                            fetchedSurveyData.filter(data => data.category_name === inputSurveyData.category_name) 
+                            .map(category => category.surveys.filter(surveyItem => surveyItem.survey_name === inputSurveyData.survey_name)
+                            .map(survey => ( 
                                 
-                                <select id='category' className='form-select' value={inputSurveyData.category_name} name='category_name' onChange={(event) => {
-                                    const selectedIndex = event.target.selectedIndex;
-                                    handleChange(event, selectedIndex); 
-                                    handleOptionSelected(event);
-                                    }}>
-                                    <option value=''>Select Category</option>
-                                    {
-                                        fetchedSurveyData.map(data => (
-                                            <option key={data._id} value={data.category_name}>{data.category_name}</option>
-                                        ))
-                                    }
-                                
-                                </select>
+                                <div key={survey._id}>
 
-                            </div>
-                            {
-                                optionSelected.category_name && (
+                                    <form>
+                                        {survey.questions.slice(inputSurveyData.currentQueIndex, inputSurveyData.currentQueIndex + 1).map(question => (
 
-                                    <div className={ViewSurveyCSS.colWidth45}>
+                                            <div className={ViewSurveyCSS.rowStyle} key={question.id}>
+                                                <div className={ViewSurveyCSS.colWidth75}>
 
-                                        <select id='survey' className='form-select' name='survey_name' value={inputSurveyData.survey_name} onChange={(event) => {handleChange(event); handleOptionSelected(event);}}>
-                                            <option value=''>Select Survey</option>
-                                            {
-                                                fetchedSurveyData.filter((data) => data.category_name === inputSurveyData.category_name)
-                                                    .map(data => data.surveys.map(survey => 
-                                                        <option key={survey._id} value={survey.survey_name}>{survey.survey_name}</option>
-                                                    ))
-                                            }
-                                        </select>
-
-                                    </div>
-                                )
-                            }
-                        </div>
-                    </div>
-
-                {
-                    optionSelected.survey_name && (
-
-                        <div>
-                            {
-                                 // ALTERNATE - 
-                                //     fetchedSurveyData.find(data => data.category_name === inputSurveyData.category_name) // return an object where the category_name matches
-                                //         .surveys.find(data => data.survey_name === inputSurveyData.survey_name) // in the surveys property of the object, find the survey where survey_name matches and return that object
-
-                                fetchedSurveyData.filter(data => data.category_name === inputSurveyData.category_name) 
-                                .map(category => category.surveys.filter(surveyItem => surveyItem.survey_name === inputSurveyData.survey_name)
-                                .map(survey => ( 
-                                    
-                                    <div key={survey._id}>
-
-                                        <form>
-                                            {survey.questions.slice(inputSurveyData.currentQueIndex, inputSurveyData.currentQueIndex + 1).map(question => (
-
-                                                <div className={ViewSurveyCSS.rowStyle} key={question.id}>
-                                                    <div className={ViewSurveyCSS.colWidth75}>
-
-                                                        <label htmlFor='question'>Question - {question.id}</label>
-                                                        <input
-                                                            type='text'
-                                                            defaultValue={question.text}
-                                                            name='question'
-                                                            onChange={(event) => handleEdit(event, question.id, -1)}
-                                                            readOnly={!optionSelected.editBtn}
-                                                        />
-
-                                                    </div>
-
-                                                    <div className='row-style'>
-
-                                                    {
-                                                        question.options.map((option, index) => (
-                                                            <div className={ViewSurveyCSS.colWidth75} key={index}>
-
-                                                                <input
-                                                                    type='text'
-                                                                    name='option'
-                                                                    defaultValue={option}
-                                                                    onChange={(event) => handleEdit(event, question.id, index)}
-                                                                    readOnly={!optionSelected.editBtn}
-                                                                />
-
-                                                            </div>
-                                                        ))
-                                                    }
-
-                                                    </div>
+                                                    <label htmlFor='question'>Question - {question.id}</label>
+                                                    <input
+                                                        type='text'
+                                                        defaultValue={question.text}
+                                                        name='question'
+                                                        onChange={(event) => handleEdit(event, question.id, -1)}
+                                                        readOnly={!optionSelected.editBtn}
+                                                    />
 
                                                 </div>
 
-                                            ))}
-                                        </form>
+                                                <div className='row-style'>
 
-                                        <div className='row-style'>
-                                            {
+                                                {
+                                                    question.options.map((option, index) => (
+                                                        <div className={ViewSurveyCSS.colWidth75} key={index}>
 
-                                                (inputSurveyData.currentQueIndex < survey.questions.length - 1 && !optionSelected.editBtn) &&
-                                                <button className={ViewSurveyCSS.functionalBtns} name='next' onClick={(event) => {handleButtons(event); handleQuestionChange(event)}}>Next</button>
-                                            }
-                                            {
-                                                (inputSurveyData.currentQueIndex >= 1 && !optionSelected.editBtn) && 
-                                                <button className={ViewSurveyCSS.functionalBtns} name='prev' onClick={handleQuestionChange}>Prev</button>
-                                            }
-                                            {
-                                                (!optionSelected.editBtn) &&
-                                                <button className={ViewSurveyCSS.functionalBtns} name='editBtn' onClick={(event) => {handleButtons(event);handleOptionSelected(event)}}>Edit</button>
-                                            }
-                                            {
-                                                (optionSelected.editBtn?true:false && optionSelected.editBtn) &&
-                                                <button className={ViewSurveyCSS.functionalBtns} name='submitEditBtn' onClick={(event) => {handleOptionSelected(event); handleButtons(event);}}>Submit Edit</button>
-                                                
-                                            }
-                                            {
-                                                // (inputSurveyData.currentQueIndex === survey.questions.length-1 || optionSelected.finalSubmitBtn?true: false) && optionSelected.finalSubmitBtn &&
-                                                (inputSurveyData.currentQueIndex === survey.questions.length-1) && !optionSelected.editBtn &&
-                                                <button className={ViewSurveyCSS.functionalBtns} name='finalSubmitBtn' onClick={(event) => {handleOptionSelected(event); handleSubmit(event);}}>Submit</button>
-                                            }
-                                        </div>
+                                                            <input
+                                                                type='text'
+                                                                name='option'
+                                                                defaultValue={option}
+                                                                onChange={(event) => handleEdit(event, question.id, index)}
+                                                                readOnly={!optionSelected.editBtn}
+                                                            />
 
+                                                        </div>
+                                                    ))
+                                                }
+
+                                                </div>
+
+                                            </div>
+
+                                        ))}
+                                    </form>
+
+                                    <div className='row-style'>
+                                        {
+
+                                            (inputSurveyData.currentQueIndex < survey.questions.length - 1 && !optionSelected.editBtn) &&
+                                            <button className={ViewSurveyCSS.functionalBtns} name='next' onClick={(event) => {handleButtons(event); handleQuestionChange(event)}}>Next</button>
+                                        }
+                                        {
+                                            (inputSurveyData.currentQueIndex >= 1 && !optionSelected.editBtn) && 
+                                            <button className={ViewSurveyCSS.functionalBtns} name='prev' onClick={handleQuestionChange}>Prev</button>
+                                        }
+                                        {
+                                            (!optionSelected.editBtn) &&
+                                            <button className={ViewSurveyCSS.functionalBtns} name='editBtn' onClick={(event) => {handleButtons(event);handleOptionSelected(event)}}>Edit</button>
+                                        }
+                                        {
+                                            (optionSelected.editBtn?true:false && optionSelected.editBtn) &&
+                                            <button className={ViewSurveyCSS.functionalBtns} name='submitEditBtn' onClick={(event) => {handleOptionSelected(event); handleButtons(event);}}>Submit Edit</button>
+                                            
+                                        }
+                                        {
+                                            // (inputSurveyData.currentQueIndex === survey.questions.length-1 || optionSelected.finalSubmitBtn?true: false) && optionSelected.finalSubmitBtn &&
+                                            (inputSurveyData.currentQueIndex === survey.questions.length-1) && !optionSelected.editBtn &&
+                                            <button className={ViewSurveyCSS.functionalBtns} name='finalSubmitBtn' onClick={(event) => {handleOptionSelected(event); handleSubmit(event);}}>Submit</button>
+                                        }
                                     </div>
-                                    ))
-                                )
-                                  
-                            }
-                        </div>
-                    )
-                }
-                </div>
+
+                                </div>
+                                ))
+                            )
+                                
+                        }
+                    </div>
+                )
+            }
             </div>
+            
             <ToastContainer />
         </>
     )
