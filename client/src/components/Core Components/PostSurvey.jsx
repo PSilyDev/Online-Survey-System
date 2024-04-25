@@ -35,6 +35,7 @@ function PostSurvey(props) {
     async function handleEmailSubmit(event){
         event.preventDefault();
 
+
         // check if to is enetered
         if(!inputSurveyData.to || inputSurveyData.to.trim() === ''){
             setErrors("Please enter 'To'!")
@@ -46,22 +47,42 @@ function PostSurvey(props) {
         }
         else{
             setInputSurveyData({...inputSurveyData, category_name: inputSurveyData.category_name, survey_name: inputSurveyData.survey_name})
-            const localAPI = await axios.post('http://localhost:4000/survey-api/sendEmail', inputSurveyData, {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem('token')}`
-                    }
-                });
 
-            if(localAPI.data.payload === 'Email sent successfully!'){
-                toast.success("Email sent successfully!", {
-                    autoClose: 2000,
-                });
+            let postData = inputSurveyData;
+            let operation = 'post'
+            let url = 'http://localhost:4000/survey-api/sendEmail'
+
+            try{
+                let returnedVal = await props.postFunction(postData, operation, url);
+                console.log('(PostSurvey) reply received - ', returnedVal);
+
+                if(returnedVal.data.payload === 'Email sent successfully!'){
+                    toast.success("Email sent successfully!", {autoClose: 2000})
+                }
+                else{
+                    toast.error("Email not sent!!", {autoClose: 2000})
+                    console.log('Unable to edit!')
+                }
             }
-            else{
-                toast.success("Error occurred!", {
-                    autoClose: 2000,
-                });
+            catch(err){
+                console.log('Error encountered - ', err)
             }
+            // const localAPI = await axios.post('http://localhost:4000/survey-api/sendEmail', inputSurveyData, {
+            //         headers: {
+            //             Authorization: `Bearer ${localStorage.getItem('token')}`
+            //         }
+            //     });
+
+            // if(localAPI.data.payload === 'Email sent successfully!'){
+            //     toast.success("Email sent successfully!", {
+            //         autoClose: 2000,
+            //     });
+            // }
+            // else{
+            //     toast.success("Error occurred!", {
+            //         autoClose: 2000,
+            //     });
+            // }
         }
     }
 
