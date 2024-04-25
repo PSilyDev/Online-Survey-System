@@ -77,27 +77,28 @@ function ViewSurvey(props){
         event.preventDefault();
         console.log('before submission : ', fetchedSurveyData[inputSurveyData.category_index-1]);
         // setOptionSelected({...optionSelected, editBtn: false});
+
+        let postData = fetchedSurveyData[inputSurveyData.category_index-1];
+        let operation = 'put';
+        let url = 'http://localhost:4000/survey-api/replaceSurvey';
+
         try{
-            const localAPI = await axios.put('http://localhost:4000/survey-api/replaceSurvey', fetchedSurveyData[inputSurveyData.category_index-1], {
-                headers:{
-                    Authorization: `Bearer ${localStorage.getItem('token')}`
-                }
-            })
-            console.log('after submission : ', localAPI.data.message);
-            
-            if(localAPI.data.message === 'survey updated'){
+
+            let returnedVal = await props.postFunction(postData, operation, url);
+            console.log('(ViewSurvey) reply received - ', returnedVal?.data?.message);
+            if(returnedVal?.data?.message === 'survey updated'){
                 toast.success('Updated Successfully!', {autoClose: 2000})
                 setTimeout(() => {
-                navigate('/postSurvey')
+                    navigate('/postSurvey')
                 }, 2500)
                 console.log('survey updated successfully!')
             }
-            else if(localAPI.data.message === 'survey not updated'){
+            else if(returnedVal?.data?.message === 'survey not updated'){
                 console.log('Unable to edit!')
             }
         }
         catch(err){
-            console.log('error encountered - ', err)
+            console.log('Error encountered - ', err);
         }
 
     }
