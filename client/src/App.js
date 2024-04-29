@@ -19,6 +19,7 @@ import AddSurvey from './components/Core Components/AddSurvey';
 // import ViewSurvey from './components/Core Components/ViewSurvey';
 import ViewSurvey from './components/Core Components/ViewSurvey';
 import TakeSurvey from './components/Core Components/TakeSurvey';
+import TakeSurvey2 from './components/Core Components/TakeSurvey2';
 import Result from './components/Core Components/Result';
 import PostSurvey from './components/Core Components/PostSurvey';
 import MainPage from './components/MainPage';
@@ -163,7 +164,8 @@ function App() {
         },
         {
           path:'takeSurvey/:categoryName/:surveyName',
-          element: <TakeSurvey />
+          element: <TakeSurvey2 />
+          // <TakeSurvey />
         },
         {
           path: 'tos',
