@@ -1,1 +1,10 @@
+done - 
+
 divide add survey in different components
+
+
+
+
+todo -
+update TakeSurvey component
+update Result component

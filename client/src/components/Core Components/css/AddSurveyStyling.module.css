@@ -13,7 +13,7 @@ input[type=text], textarea {
 }
 
 label {
-    border: 5px solid green;
+    /* border: 5px solid green; */
 
     padding: 12px 12px 12px 0px;
     display: inline-block;
@@ -21,7 +21,7 @@ label {
 
 
 .selectType {
-    border: 5px dashed black;
+    /* border: 5px dashed black; */
     background-color: #04AA6D;
     color: white;
     padding: 12px 20px 12px 20px;
@@ -37,7 +37,7 @@ input[type=submit]:hover {
 }
 
 .containerStyle {
-    border: 5px solid red;
+    /* border: 5px solid red; */
     border-radius: 5px;
     background-color: #f2f2f2;
     padding: 20px;
@@ -48,28 +48,28 @@ input[type=submit]:hover {
 
 
 .colWidth25 {
-    border: 5px dashed blue;
+    /* border: 5px dashed blue; */
     float: left;
     width: 25%;
     margin-top: 6px;
 }
 
 .colWidth75 {
-    border: 5px dashed yellow;
+    /* border: 5px dashed yellow; */
     float: left;
     width: 75%;
     margin-top: 10px;
 }
 
 .colWidth70 {
-    border: 5px dashed yellow;
+    /* border: 5px dashed yellow; */
     float: left;
     width: 70%;
     margin-top: 6px;
 }
 
 .colWidth10 {
-    border: 5px dashed black;
+    /* border: 5px dashed black; */
     float: right;
     
     width: 4%;
@@ -108,7 +108,7 @@ input[type=submit]:hover {
 }
 
 .functionalBtns {
-    border: 5px dashed black;
+    /* border: 5px dashed black; */
     background-color: #04AA6D;
     border: none;
     color: white;
@@ -133,7 +133,7 @@ input[type=submit]:hover {
 } */
 
 .rowStyleOpt {
-    border: 5px solid pink;
+    /* border: 5px solid pink; */
     content: "";
     display: table;
     clear: both;
@@ -150,25 +150,25 @@ input[type=submit]:hover {
         flex-direction: column;
     }
     .colWidth25 {
-        border: 5px dashed blue;
+        /* border: 5px dashed blue; */
         float: left;
         width: 100%;
         margin-top: 6px;
     }
     .colWidth75 {
-        border: 5px dashed yellow;
+        /* border: 5px dashed yellow; */
         float: left;
         width: 100%;
         margin-top: 6px;
     }
     .colWidth70 {
-        border: 5px dashed yellow;
+        /* border: 5px dashed yellow; */
         float: left;
         width: 91%;
         margin-top: 6px;
     }
     .colWidth10 {
-        border: 5px dashed black;
+        /* border: 5px dashed black; */
         width: 9%;
         /* float: right; */
         float: right;
